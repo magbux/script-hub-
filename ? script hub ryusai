@@ -1,8 +1,3 @@
---[[
-    VENYX UI LIBRARY - HOST ON GITHUB
-    Save this file as "VenyxLibrary.lua" or similar.
-]]
-
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -11,7 +6,6 @@ local CoreGui = game:GetService("CoreGui")
 local Venyx = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
 
---// Colors (Venyx Palette)
 local Theme = {
     Background = Color3.fromRGB(24, 24, 24),
     Glow = Color3.fromRGB(0, 0, 0),
@@ -21,12 +15,10 @@ local Theme = {
     TextColor = Color3.fromRGB(255, 255, 255)
 }
 
---// Cleanup Old UI
 if game.CoreGui:FindFirstChild("VenyxUI") then
     game.CoreGui.VenyxUI:Destroy()
 end
 
---// Utility Function
 local function Create(class, properties)
     local instance = Instance.new(class)
     for k, v in pairs(properties) do
@@ -35,7 +27,6 @@ local function Create(class, properties)
     return instance
 end
 
---// Main Constructor
 function Venyx.new(title)
     local Library = {}
     
@@ -55,9 +46,8 @@ function Venyx.new(title)
         ClipsDescendants = true
     })
     
-    -- Sharp Corners
     Create("UICorner", {Parent = Main, CornerRadius = UDim.new(0, 0)})
-    Create("Frame", { -- Patch for corner
+    Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
@@ -105,7 +95,6 @@ function Venyx.new(title)
         Library:toggle()
     end)
     
-    -- Dragging Logic
     local Dragging, DragInput, DragStart, StartPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -127,7 +116,6 @@ function Venyx.new(title)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then Dragging = false end
     end)
     
-    -- UI Containers
     local Sidebar = Create("Frame", {
         Name = "Sidebar",
         Parent = Main,
@@ -159,7 +147,6 @@ function Venyx.new(title)
         Size = UDim2.new(1, -150, 1, -60)
     })
     
-    -- Keybind Toggle Listener
     UserInputService.InputBegan:Connect(function(input, gp)
         if not gp and input.KeyCode == UIConfig.Keybind then
             Library:toggle()
@@ -195,7 +182,7 @@ function Venyx.new(title)
             Parent = Pages,
             BackgroundTransparency = 1,
             Size = UDim2.new(1, 0, 1, 0),
-            ScrollBarThickness = 2,
+            ScrollBarThickness = 0,
             ScrollBarImageColor3 = Theme.LightContrast,
             Visible = false
         })
@@ -233,7 +220,6 @@ function Venyx.new(title)
         local Section = {}
         function Section:AddSection() return Section end
         
-        --// ADD TOGGLE
         function Section:AddToggle(props)
             local ToggleBox = Create("Frame", {
                 Parent = Page,
@@ -279,7 +265,6 @@ function Venyx.new(title)
             end)
         end
         
-        --// ADD BUTTON
         function Section:AddButton(props)
             local Button = Create("TextButton", {
                 Parent = Page,
@@ -306,7 +291,6 @@ function Venyx.new(title)
             end)
         end
         
-        --// ADD SLIDER
         function Section:AddSlider(props)
             local SliderBox = Create("Frame", {
                 Parent = Page,
@@ -390,7 +374,6 @@ function Venyx.new(title)
             end)
         end
 
-        --// ADD DROPDOWN
         function Section:AddDropdown(props)
             local Dropdown = Create("Frame", {
                 Parent = Page,
@@ -438,7 +421,7 @@ function Venyx.new(title)
                 Position = UDim2.new(0, 0, 0, 36),
                 Size = UDim2.new(1, 0, 0, 100),
                 CanvasSize = UDim2.new(0,0,0,0),
-                ScrollBarThickness = 2,
+                ScrollBarThickness = 0,
                 ScrollBarImageColor3 = Theme.Accent
             })
             local ItemLayout = Create("UIListLayout", {
@@ -486,7 +469,6 @@ function Venyx.new(title)
             end
         end
 
-        --// ADD KEYBIND (ARGS: Name, DefaultKey, Callback)
         function Section:AddKeybind(name, defaultKey, onActivate)
             local BindFrame = Create("Frame", {
                 Parent = Page,
