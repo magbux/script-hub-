@@ -6,11 +6,11 @@ local CoreGui = game:GetService("CoreGui")
 local Ryusai = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
 
--- Animation Settings
+-- Animation Config
 local TweenInfo_Hover = TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 local TweenInfo_Click = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local TweenInfo_Tab = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
-local TweenInfo_Line = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out) -- New tween for the line
+local TweenInfo_Line = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 local Theme = {
     Background = Color3.fromRGB(24, 24, 24),
@@ -116,16 +116,14 @@ function Ryusai.new(title)
         ZIndex = 2
     })
     
-    -- // UNLOAD FUNCTION //
+    -- // UNLOAD FUNCTION (ANIMATED) //
     function Library:Unload()
-        -- Play unload animation (Shrink + Fade)
         local closeTween = TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
             Size = UDim2.new(0, 0, 0, 0),
             BackgroundTransparency = 1
         })
         closeTween:Play()
         
-        -- Fade out contents
         for _, v in pairs(Main:GetDescendants()) do
             if v:IsA("GuiObject") then
                 TweenService:Create(v, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
@@ -153,7 +151,7 @@ function Ryusai.new(title)
     end
 
     CloseBtn.MouseButton1Click:Connect(function()
-        Library:Unload() -- Changed to use the new Unload function for the X button too
+        Library:Unload()
     end)
     
     local Dragging, DragInput, DragStart, StartPos
@@ -234,15 +232,14 @@ function Ryusai.new(title)
             AutoButtonColor = false
         })
         
-        -- // TAB LINE INDICATOR //
-        -- Set AnchorPoint to 0, 0.5 so it grows from the center vertically
+        -- // TAB LINE ANIMATION INDICATOR //
         local Indicator = Create("Frame", {
             Parent = TabBtn,
             BackgroundColor3 = Theme.Accent,
             BorderSizePixel = 0,
             AnchorPoint = Vector2.new(0, 0.5),
-            Position = UDim2.new(0, 0, 0.5, 0), 
-            Size = UDim2.new(0, 3, 0, 0), -- Start with 0 Height (Invisible)
+            Position = UDim2.new(0, 0, 0.5, 0),
+            Size = UDim2.new(0, 3, 0, 0), -- Start Invisible
             Visible = true
         })
 
@@ -257,22 +254,24 @@ function Ryusai.new(title)
             CanvasSize = UDim2.new(0, 0, 0, 0) 
         })
         
+        -- [!] THIS SECTION ADDS THE SPACE AROUND THE BUTTONS [!]
         Create("UIPadding", {
             Parent = Page,
-            PaddingTop = UDim.new(0, 10),
-            PaddingLeft = UDim.new(0, 10),
-            PaddingRight = UDim.new(0, 10),
-            PaddingBottom = UDim.new(0, 10)
+            PaddingTop = UDim.new(0, 12),
+            PaddingLeft = UDim.new(0, 12),
+            PaddingRight = UDim.new(0, 12),
+            PaddingBottom = UDim.new(0, 12)
         })
 
+        -- [!] THIS SECTION ADDS THE SPACE BETWEEN BUTTONS [!]
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 12)
+            Padding = UDim.new(0, 12) -- Gap between items
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            Page.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y + 20)
+            Page.CanvasSize = UDim2.new(0, 0, 0, PageLayout.AbsoluteContentSize.Y + 24)
         end)
         
         TabBtn.MouseButton1Click:Connect(function()
@@ -280,10 +279,8 @@ function Ryusai.new(title)
             
             for _, t in pairs(Tabs) do
                 if t.Page.Visible then
-                    -- Deactivate Old Tab
                     TweenService:Create(t.Btn, TweenInfo_Hover, {TextColor3 = Color3.fromRGB(150, 150, 150)}):Play()
-                    
-                    -- ANIMATION: Shrink the old line (Disappear)
+                    -- Shrink line out
                     TweenService:Create(t.Ind, TweenInfo_Line, {Size = UDim2.new(0, 3, 0, 0)}):Play()
                     
                     task.spawn(function()
@@ -304,7 +301,7 @@ function Ryusai.new(title)
             CurrentTab = Page
             Page.Visible = true
             
-            -- ANIMATION: Expand the new line (Appear)
+            -- Grow line in
             TweenService:Create(Indicator, TweenInfo_Line, {Size = UDim2.new(0, 3, 1, 0)}):Play()
             
             Page.Position = UDim2.new(0, 0, 0, 15)
@@ -334,8 +331,6 @@ function Ryusai.new(title)
             CurrentTab = Page
             Page.Visible = true
             TabBtn.TextColor3 = Theme.TextColor
-            
-            -- Set first tab indicator to full size immediately
             Indicator.Size = UDim2.new(0, 3, 1, 0)
         end
         
@@ -349,7 +344,7 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36)
+                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding
             })
             Create("UICorner", {Parent = ToggleBox, CornerRadius = UDim.new(0, 4)})
             
@@ -396,7 +391,7 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36),
+                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPadding
                 Font = Enum.Font.Gotham,
                 Text = props.Name,
                 TextColor3 = Theme.TextColor,
@@ -424,7 +419,7 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 50)
+                Size = UDim2.new(1, 0, 0, 50) -- Width handled by UIPadding
             })
             Create("UICorner", {Parent = SliderBox, CornerRadius = UDim.new(0, 4)})
             
@@ -508,7 +503,7 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36),
+                Size = UDim2.new(1, 0, 0, 36), -- Width handled by UIPadding
                 ClipsDescendants = true
             })
             Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 4)})
@@ -554,9 +549,12 @@ function Ryusai.new(title)
                 ScrollBarThickness = 0,
                 ScrollBarImageColor3 = Theme.Accent
             })
+            
+            -- PADDING FOR DROPDOWN LIST TOO
             local ItemLayout = Create("UIListLayout", {
                 Parent = ItemHolder,
-                SortOrder = Enum.SortOrder.LayoutOrder
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 4) 
             })
             
             ItemLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -568,10 +566,10 @@ function Ryusai.new(title)
             OpenBtn.MouseButton1Click:Connect(function()
                 Open = not Open
                 if Open then
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -5, 0, 136)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 136)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 180}):Play()
                 else
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -5, 0, 36)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 0, 36)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 0}):Play()
                 end
             end)
@@ -600,7 +598,7 @@ function Ryusai.new(title)
                 ItemBtn.MouseButton1Click:Connect(function()
                     Open = false
                     Text.Text = props.Name .. ": " .. item
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(1, -5, 0, 36)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(1, 0, 0, 36)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Rotation = 0}):Play()
                     if props.Callback then props.Callback(item) end
                 end)
@@ -612,7 +610,7 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36)
+                Size = UDim2.new(1, 0, 0, 36) -- Width handled by UIPadding
             })
             Create("UICorner", {Parent = BindFrame, CornerRadius = UDim.new(0, 4)})
 
