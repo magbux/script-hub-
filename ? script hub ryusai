@@ -282,6 +282,9 @@ function Ryusai.new(title)
                     TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = (child == SlideTrack and 1 or (child.Name == "ToggleBox" and 0 or Theme.LightContrast == child.BackgroundColor3 and 0 or 0))}):Play()
                     child.Visible = true
                end
+               if child:IsA("GuiObject") and child:FindFirstChild("UICorner") then
+                   TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+               end
             end
         end)
         
@@ -305,6 +308,7 @@ function Ryusai.new(title)
                 BorderSizePixel = 0,
                 Size = UDim2.new(1, -2, 0, 36)
             })
+            Create("UICorner", {Parent = ToggleBox, CornerRadius = UDim.new(0, 4)})
             
             Create("TextLabel", {
                 Parent = ToggleBox,
@@ -327,6 +331,7 @@ function Ryusai.new(title)
                 Text = "",
                 AutoButtonColor = false
             })
+            Create("UICorner", {Parent = Checkbox, CornerRadius = UDim.new(0, 4)})
             
             AddRipple(Checkbox)
             
@@ -355,6 +360,7 @@ function Ryusai.new(title)
                 TextSize = 13,
                 AutoButtonColor = false
             })
+            Create("UICorner", {Parent = Button, CornerRadius = UDim.new(0, 4)})
             
             AddRipple(Button)
             
@@ -377,6 +383,7 @@ function Ryusai.new(title)
                 BorderSizePixel = 0,
                 Size = UDim2.new(1, -2, 0, 50)
             })
+            Create("UICorner", {Parent = SliderBox, CornerRadius = UDim.new(0, 4)})
             
             Create("TextLabel", {
                 Parent = SliderBox,
@@ -411,6 +418,7 @@ function Ryusai.new(title)
                 Text = "",
                 AutoButtonColor = false
             })
+            Create("UICorner", {Parent = SlideTrack, CornerRadius = UDim.new(0, 2)})
             
             local Fill = Create("Frame", {
                 Parent = SlideTrack,
@@ -418,6 +426,7 @@ function Ryusai.new(title)
                 BorderSizePixel = 0,
                 Size = UDim2.new(0, 0, 1, 0)
             })
+            Create("UICorner", {Parent = Fill, CornerRadius = UDim.new(0, 2)})
             
             local min, max, def = props.Min or 0, props.Max or 100, props.Default or 0
             Fill.Size = UDim2.new((def - min)/(max - min), 0, 1, 0)
@@ -459,6 +468,7 @@ function Ryusai.new(title)
                 Size = UDim2.new(1, -2, 0, 36),
                 ClipsDescendants = true
             })
+            Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 4)})
 
             local Text = Create("TextLabel", {
                 Parent = Dropdown,
@@ -535,6 +545,7 @@ function Ryusai.new(title)
                     TextSize = 12,
                     AutoButtonColor = false
                 })
+                Create("UICorner", {Parent = ItemBtn, CornerRadius = UDim.new(0, 4)})
                 
                 ItemBtn.MouseEnter:Connect(function()
                     TweenService:Create(ItemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, TextColor3 = Color3.new(1,1,1)}):Play()
@@ -560,6 +571,7 @@ function Ryusai.new(title)
                 BorderSizePixel = 0,
                 Size = UDim2.new(1, -2, 0, 36)
             })
+            Create("UICorner", {Parent = BindFrame, CornerRadius = UDim.new(0, 4)})
 
             Create("TextLabel", {
                 Parent = BindFrame,
@@ -585,6 +597,7 @@ function Ryusai.new(title)
                 TextSize = 12,
                 AutoButtonColor = false
             })
+            Create("UICorner", {Parent = BindBtn, CornerRadius = UDim.new(0, 4)})
             AddRipple(BindBtn)
 
             local currentKey = defaultKey
