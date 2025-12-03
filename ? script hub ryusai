@@ -6,9 +6,11 @@ local CoreGui = game:GetService("CoreGui")
 local Ryusai = {}
 local UIConfig = { Keybind = Enum.KeyCode.RightControl }
 
+-- Animation Settings
 local TweenInfo_Hover = TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 local TweenInfo_Click = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local TweenInfo_Tab = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+local TweenInfo_Line = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out) -- New tween for the line
 
 local Theme = {
     Background = Color3.fromRGB(24, 24, 24),
@@ -114,6 +116,29 @@ function Ryusai.new(title)
         ZIndex = 2
     })
     
+    -- // UNLOAD FUNCTION //
+    function Library:Unload()
+        -- Play unload animation (Shrink + Fade)
+        local closeTween = TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0),
+            BackgroundTransparency = 1
+        })
+        closeTween:Play()
+        
+        -- Fade out contents
+        for _, v in pairs(Main:GetDescendants()) do
+            if v:IsA("GuiObject") then
+                TweenService:Create(v, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+            end
+            if v:IsA("TextLabel") or v:IsA("TextButton") then
+                TweenService:Create(v, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            end
+        end
+
+        closeTween.Completed:Wait()
+        ScreenGui:Destroy()
+    end
+
     function Library:toggle()
         if Main.Visible then
             local tween = TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 550, 0, 0)})
@@ -128,7 +153,7 @@ function Ryusai.new(title)
     end
 
     CloseBtn.MouseButton1Click:Connect(function()
-        Library:toggle()
+        Library:Unload() -- Changed to use the new Unload function for the X button too
     end)
     
     local Dragging, DragInput, DragStart, StartPos
@@ -209,13 +234,16 @@ function Ryusai.new(title)
             AutoButtonColor = false
         })
         
+        -- // TAB LINE INDICATOR //
+        -- Set AnchorPoint to 0, 0.5 so it grows from the center vertically
         local Indicator = Create("Frame", {
             Parent = TabBtn,
             BackgroundColor3 = Theme.Accent,
             BorderSizePixel = 0,
-            Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(0, 3, 1, 0),
-            Visible = false
+            AnchorPoint = Vector2.new(0, 0.5),
+            Position = UDim2.new(0, 0, 0.5, 0), 
+            Size = UDim2.new(0, 3, 0, 0), -- Start with 0 Height (Invisible)
+            Visible = true
         })
 
         local Page = Create("ScrollingFrame", {
@@ -229,7 +257,6 @@ function Ryusai.new(title)
             CanvasSize = UDim2.new(0, 0, 0, 0) 
         })
         
-        -- // PADDING FIXES HERE //
         Create("UIPadding", {
             Parent = Page,
             PaddingTop = UDim.new(0, 10),
@@ -241,7 +268,7 @@ function Ryusai.new(title)
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 10) -- Space between buttons
+            Padding = UDim.new(0, 12)
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -253,8 +280,11 @@ function Ryusai.new(title)
             
             for _, t in pairs(Tabs) do
                 if t.Page.Visible then
+                    -- Deactivate Old Tab
                     TweenService:Create(t.Btn, TweenInfo_Hover, {TextColor3 = Color3.fromRGB(150, 150, 150)}):Play()
-                    t.Ind.Visible = false
+                    
+                    -- ANIMATION: Shrink the old line (Disappear)
+                    TweenService:Create(t.Ind, TweenInfo_Line, {Size = UDim2.new(0, 3, 0, 0)}):Play()
                     
                     task.spawn(function()
                         local oldPage = t.Page
@@ -274,6 +304,9 @@ function Ryusai.new(title)
             CurrentTab = Page
             Page.Visible = true
             
+            -- ANIMATION: Expand the new line (Appear)
+            TweenService:Create(Indicator, TweenInfo_Line, {Size = UDim2.new(0, 3, 1, 0)}):Play()
+            
             Page.Position = UDim2.new(0, 0, 0, 15)
             for _, child in pairs(Page:GetChildren()) do
                 if child:IsA("GuiObject") then child.BackgroundTransparency = 1 end
@@ -282,7 +315,6 @@ function Ryusai.new(title)
 
             TweenService:Create(Page, TweenInfo_Tab, {Position = UDim2.new(0,0,0,0)}):Play()
             TweenService:Create(TabBtn, TweenInfo_Hover, {TextColor3 = Theme.TextColor}):Play()
-            Indicator.Visible = true
             
             for _, child in pairs(Page:GetDescendants()) do
                if child:IsA("TextLabel") or child:IsA("TextButton") then
@@ -302,7 +334,9 @@ function Ryusai.new(title)
             CurrentTab = Page
             Page.Visible = true
             TabBtn.TextColor3 = Theme.TextColor
-            Indicator.Visible = true
+            
+            -- Set first tab indicator to full size immediately
+            Indicator.Size = UDim2.new(0, 3, 1, 0)
         end
         
         table.insert(Tabs, {Btn = TabBtn, Page = Page, Ind = Indicator})
