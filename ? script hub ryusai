@@ -81,24 +81,12 @@ function Ryusai.new(title)
         ClipsDescendants = true
     })
     
-    Create("UICorner", {Parent = Main, CornerRadius = UDim.new(0, 12)})
-    
     local TopBar = Create("Frame", {
         Name = "TopBar",
         Parent = Main,
         BackgroundColor3 = Theme.LightContrast,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 40)
-    })
-    Create("UICorner", {Parent = TopBar, CornerRadius = UDim.new(0, 12)})
-    
-    local TopBarCover = Create("Frame", {
-        Parent = TopBar,
-        BackgroundColor3 = Theme.LightContrast,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 1, -10),
-        Size = UDim2.new(1, 0, 0, 10),
-        ZIndex = 1
     })
     
     Create("TextLabel", {
@@ -220,8 +208,7 @@ function Ryusai.new(title)
             TextSize = 13,
             AutoButtonColor = false
         })
-        Create("UICorner", {Parent = TabBtn, CornerRadius = UDim.new(0, 8)})
-
+        
         local Indicator = Create("Frame", {
             Parent = TabBtn,
             BackgroundColor3 = Theme.Accent,
@@ -245,7 +232,7 @@ function Ryusai.new(title)
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 8)
+            Padding = UDim.new(0, 6)
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
@@ -295,11 +282,6 @@ function Ryusai.new(title)
                     TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = (child == SlideTrack and 1 or (child.Name == "ToggleBox" and 0 or Theme.LightContrast == child.BackgroundColor3 and 0 or 0))}):Play()
                     child.Visible = true
                end
-               if child:IsA("GuiObject") then
-                    if child:FindFirstChild("UICorner") then
-                        TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
-                    end
-               end
             end
         end)
         
@@ -321,9 +303,8 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36)
+                Size = UDim2.new(1, -2, 0, 36)
             })
-            Create("UICorner", {Parent = ToggleBox, CornerRadius = UDim.new(0, 8)})
             
             Create("TextLabel", {
                 Parent = ToggleBox,
@@ -346,7 +327,6 @@ function Ryusai.new(title)
                 Text = "",
                 AutoButtonColor = false
             })
-            Create("UICorner", {Parent = Checkbox, CornerRadius = UDim.new(0, 6)})
             
             AddRipple(Checkbox)
             
@@ -368,14 +348,13 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36),
+                Size = UDim2.new(1, -2, 0, 36),
                 Font = Enum.Font.Gotham,
                 Text = props.Name,
                 TextColor3 = Theme.TextColor,
                 TextSize = 13,
                 AutoButtonColor = false
             })
-            Create("UICorner", {Parent = Button, CornerRadius = UDim.new(0, 8)})
             
             AddRipple(Button)
             
@@ -396,9 +375,8 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 50)
+                Size = UDim2.new(1, -2, 0, 50)
             })
-            Create("UICorner", {Parent = SliderBox, CornerRadius = UDim.new(0, 8)})
             
             Create("TextLabel", {
                 Parent = SliderBox,
@@ -433,7 +411,6 @@ function Ryusai.new(title)
                 Text = "",
                 AutoButtonColor = false
             })
-            Create("UICorner", {Parent = SlideTrack, CornerRadius = UDim.new(0, 4)})
             
             local Fill = Create("Frame", {
                 Parent = SlideTrack,
@@ -441,7 +418,6 @@ function Ryusai.new(title)
                 BorderSizePixel = 0,
                 Size = UDim2.new(0, 0, 1, 0)
             })
-            Create("UICorner", {Parent = Fill, CornerRadius = UDim.new(0, 4)})
             
             local min, max, def = props.Min or 0, props.Max or 100, props.Default or 0
             Fill.Size = UDim2.new((def - min)/(max - min), 0, 1, 0)
@@ -480,10 +456,9 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36),
+                Size = UDim2.new(1, -2, 0, 36),
                 ClipsDescendants = true
             })
-            Create("UICorner", {Parent = Dropdown, CornerRadius = UDim.new(0, 8)})
 
             local Text = Create("TextLabel", {
                 Parent = Dropdown,
@@ -540,10 +515,10 @@ function Ryusai.new(title)
             OpenBtn.MouseButton1Click:Connect(function()
                 Open = not Open
                 if Open then
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -5, 0, 136)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -2, 0, 136)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 180}):Play()
                 else
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -5, 0, 36)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.new(1, -2, 0, 36)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Rotation = 0}):Play()
                 end
             end)
@@ -560,7 +535,6 @@ function Ryusai.new(title)
                     TextSize = 12,
                     AutoButtonColor = false
                 })
-                Create("UICorner", {Parent = ItemBtn, CornerRadius = UDim.new(0, 6)})
                 
                 ItemBtn.MouseEnter:Connect(function()
                     TweenService:Create(ItemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Theme.Accent, TextColor3 = Color3.new(1,1,1)}):Play()
@@ -572,7 +546,7 @@ function Ryusai.new(title)
                 ItemBtn.MouseButton1Click:Connect(function()
                     Open = false
                     Text.Text = props.Name .. ": " .. item
-                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(1, -5, 0, 36)}):Play()
+                    TweenService:Create(Dropdown, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(1, -2, 0, 36)}):Play()
                     TweenService:Create(Arrow, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Rotation = 0}):Play()
                     if props.Callback then props.Callback(item) end
                 end)
@@ -584,9 +558,8 @@ function Ryusai.new(title)
                 Parent = Page,
                 BackgroundColor3 = Theme.LightContrast,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, -5, 0, 36)
+                Size = UDim2.new(1, -2, 0, 36)
             })
-            Create("UICorner", {Parent = BindFrame, CornerRadius = UDim.new(0, 8)})
 
             Create("TextLabel", {
                 Parent = BindFrame,
@@ -612,7 +585,6 @@ function Ryusai.new(title)
                 TextSize = 12,
                 AutoButtonColor = false
             })
-            Create("UICorner", {Parent = BindBtn, CornerRadius = UDim.new(0, 6)})
             AddRipple(BindBtn)
 
             local currentKey = defaultKey
