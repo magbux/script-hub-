@@ -232,7 +232,8 @@ function Ryusai.new(title)
         local PageLayout = Create("UIListLayout", {
             Parent = Page,
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 6)
+            -- I CHANGED THIS FROM 6 TO 12 TO ADD MORE SPACE
+            Padding = UDim.new(0, 12) 
         })
         
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
